@@ -26,14 +26,14 @@ model Category {
 }
 
 model Transaction {
-  id         String          @id @default(auto()) @map("_id") @db.ObjectId
-  decription String
-  amount     Float
-  date       DateTime
-  type       TransactionType
-  userId     String
-  createdAt  DateTime        @default(now())
-  updatedAt  DateTime        @updatedAt
+  id          String          @id @default(auto()) @map("_id") @db.ObjectId
+  description String
+  amount      Float
+  date        DateTime
+  type        TransactionType
+  userId      String
+  createdAt   DateTime        @default(now())
+  updatedAt   DateTime        @updatedAt
 
   categoryId String   @db.ObjectId
   category   Category @relation(fields: [categoryId], references: [id])
