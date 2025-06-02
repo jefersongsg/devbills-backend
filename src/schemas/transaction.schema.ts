@@ -49,7 +49,13 @@ export const getTransactionSummarySchema = z.object({
     ),
 });
 
+export const deleteTransactionSchema = z.object({
+    id: z.string().refine(isValidObjectId, {
+        message:  "id invalido"
+    }),
+});
 
 export type CreateTransactionBody = z.infer<typeof createTransactionSchema>;
 export type GetTransactionsQuiery = z.infer<typeof getTransactionSchema>;
 export type GetTransactionsSummaryQuiery = z.infer<typeof getTransactionSummarySchema>;
+export type deleteTransactionParams = z.infer<typeof deleteTransactionSchema>;

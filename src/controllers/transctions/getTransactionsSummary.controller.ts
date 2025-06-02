@@ -1,8 +1,13 @@
 import type { FastifyReply, FastifyRequest } from "fastify";
 import type { GetTransactionsSummaryQuiery } from "../../schemas/transaction.schema";
+import type { TransactionSummary } from "../../types/transactions.type";
+import type { CategorySummary } from "../../types/category.types";
+import { TransactionType } from "@prisma/client";
 import dayjs from "dayjs";
 import utc from "dayjs/plugin/utc";
 import prisma from "../../config/prisma";
+
+
 dayjs.extend(utc);
 
 
@@ -42,12 +47,47 @@ export const  getTransactionsSummary = async (
                     category: true,
                 },
             });
-            reply.status(200).send(transactions);
+
+            let totalIncomes = 0;
+            let totalExpenses = 0;
+            const groupeExpenses = new Map<string, CategorySummary>();
+
+            for(const transaction of transactions){
+
+                if(transaction.type === TransactionType.expense){
+
+                    const existing = groupeExpenses.get(transaction.categoryId) ?? {
+                        categoryId: transaction.categoryId,
+                        categoryName: transaction.category.name,
+                        categoryColor: transaction.category.color,
+                        amount: 0,
+                        percentage: 0,
+                    };
+
+                    existing.amount += transaction.amount;
+                    groupeExpenses.set(transaction.categoryId, existing);
+
+                    totalExpenses += transaction.amount;                         
+                } else {
+                    totalIncomes += transaction.amount; 
+                   
+                    }
+                }
+
+                const summary: TransactionSummary = {
+                    totalIncomes,
+                    totalExpenses,
+                    balance: Number((totalIncomes - totalExpenses).toFixed(2)),
+                    expensesByCategory: Array.from(groupeExpenses.values()).map((entry) => ({
+                        ...entry,
+                        percentage: Number.parseFloat(((entry.amount / totalExpenses) * 100).toFixed(2)),
+                    })).sort((a, b) => b.amount - a.amount),
+                };
+
+            reply.status(200).send(summary);
             
         } catch (error) {
             req.log.error('Error while fetching transactions', error);
-            reply.status(500).send({
-                error: 'Internal server error',
-            });      
+            reply.status(500).send({ error: 'Internal server error' });      
         }
 };
