@@ -1,10 +1,10 @@
-import { TransactionType } from "@prisma/client";
-import { CategorySummary } from "./category.types";
+import type { TransactionType } from "@prisma/client";
+import type { CategorySummary } from "./category.types";
 
 
 export interface TransactionFilter {
     userId: string;
-    date?: {  gte:Date;  lte:Date;};
+    date?: { gte: Date; lte: Date; };
     categoryId?: string;
     type?: TransactionType;
 }
@@ -14,5 +14,5 @@ export interface TransactionSummary {
     totalIncomes: number;
     balance: number;
     expensesByCategory: CategorySummary[];
-   
+
 }

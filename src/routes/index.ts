@@ -7,8 +7,8 @@ async function routes(fastify: FastifyInstance): Promise<void> {
     return { hello: 'world' }
   });
 
-  fastify.register(categoryRoutes ,{prefix: '/categories'})
-  fastify.register(transactionRoutes ,{prefix: '/transactions'})
+  fastify.register(categoryRoutes, { prefix: '/categories' })
+  fastify.register(transactionRoutes, { prefix: '/transactions' })
 
 }
 

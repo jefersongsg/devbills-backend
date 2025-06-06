@@ -1,24 +1,25 @@
-import { FastifyReply, FastifyRequest } from "fastify";
-import { createTransactionSchema, type CreateTransactionBody} from "../../schemas/transaction.schema";
+import type { FastifyReply, FastifyRequest } from "fastify";
 import prisma from "../../config/prisma";
+import { type CreateTransactionBody, createTransactionSchema } from "../../schemas/transaction.schema";
 
 
 const createTransaction = async (
-    req: FastifyRequest<{Body:CreateTransactionBody}>, 
+    req: FastifyRequest<{ Body: CreateTransactionBody }>,
     reply: FastifyReply)
     : Promise<void> => {
 
     const userId = '123456abcde';
 
-    if(!userId){
+    if (!userId) {
         reply.status(401).send({
-            error: 'User not found'});
-            return;
+            error: 'User not found'
+        });
+        return;
     }
 
     const result = createTransactionSchema.safeParse(req.body);
 
-    if(!result.success){
+    if (!result.success) {
         const errorMessage = result.error.errors[0].message || 'invalid validation';
 
         reply.status(400).send({
@@ -37,7 +38,7 @@ const createTransaction = async (
             },
         });
 
-        if(!category){
+        if (!category) {
             reply.status(400).send({
                 error: 'Category not found',
             });
@@ -48,7 +49,7 @@ const createTransaction = async (
         const newTransaction = await prisma.transaction.create({
             data: {
                 ...transaction,
-                date:parsedDate,
+                date: parsedDate,
                 userId,
                 decription: transaction.description,
             },
@@ -60,8 +61,9 @@ const createTransaction = async (
         return;
     }
     catch (err) {
-        req.log.error('Error ao criar transaçao',err);
-        reply.status(500).send({error: 'Internal server error'});
+        req.log.error('Error ao criar transaçao', err);
+        reply.status(500).send({ error: 'Internal server error' });
+        console.log(err)
     }
 };
 export default createTransaction;

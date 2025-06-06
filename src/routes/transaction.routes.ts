@@ -1,18 +1,18 @@
-import { FastifyInstance } from "fastify";
+import type { FastifyInstance } from "fastify";
+import { zodToJsonSchema } from "zod-to-json-schema";
 import createTransaction from "../controllers/transctions/createTransaction.controller";
-import {zodToJsonSchema} from "zod-to-json-schema";
-import { createTransactionSchema, deleteTransactionSchema, getTransactionSchema, getTransactionSummarySchema } from "../schemas/transaction.schema";
+import { deleteTransactions } from "../controllers/transctions/deletTransaction.controller";
 import { getTransactions } from "../controllers/transctions/getTransactions.controller";
 import { getTransactionsSummary } from "../controllers/transctions/getTransactionsSummary.controller";
-import { deleteTransactions } from "../controllers/transctions/deletTransaction.controller";
+import { createTransactionSchema, deleteTransactionSchema, getTransactionSchema, getTransactionSummarySchema } from "../schemas/transaction.schema";
 
 
 const transactionRoutes = async (fastify: FastifyInstance): Promise<void> => {
   fastify.route({
     method: "POST",
     url: "/",
-    schema:{
-        body: zodToJsonSchema(createTransactionSchema),
+    schema: {
+      body: zodToJsonSchema(createTransactionSchema),
     },
     handler: createTransaction,
   });
@@ -20,8 +20,8 @@ const transactionRoutes = async (fastify: FastifyInstance): Promise<void> => {
   fastify.route({
     method: "GET",
     url: "/",
-    schema:{
-        querystring: zodToJsonSchema(getTransactionSchema),
+    schema: {
+      querystring: zodToJsonSchema(getTransactionSchema),
     },
     handler: getTransactions,
   });
@@ -29,8 +29,8 @@ const transactionRoutes = async (fastify: FastifyInstance): Promise<void> => {
   fastify.route({
     method: "GET",
     url: "/summary",
-    schema:{
-        querystring: zodToJsonSchema(getTransactionSummarySchema),
+    schema: {
+      querystring: zodToJsonSchema(getTransactionSummarySchema),
     },
     handler: getTransactionsSummary,
   });
@@ -38,8 +38,8 @@ const transactionRoutes = async (fastify: FastifyInstance): Promise<void> => {
   fastify.route({
     method: "DELETE",
     url: "/:id",
-    schema:{
-        params: zodToJsonSchema(deleteTransactionSchema),
+    schema: {
+      params: zodToJsonSchema(deleteTransactionSchema),
     },
     handler: deleteTransactions,
   });
