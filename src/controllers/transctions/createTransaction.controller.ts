@@ -9,7 +9,6 @@ const createTransaction = async (
     : Promise<void> => {
 
     const userId = '123456abcde';
-
     if (!userId) {
         reply.status(401).send({
             error: 'User not found'
@@ -18,7 +17,6 @@ const createTransaction = async (
     }
 
     const result = createTransactionSchema.safeParse(req.body);
-
     if (!result.success) {
         const errorMessage = result.error.errors[0].message || 'invalid validation';
 
@@ -29,7 +27,6 @@ const createTransaction = async (
     }
 
     const transaction = result.data;
-
     try {
         const category = await prisma.category.findFirst({
             where: {
@@ -37,33 +34,30 @@ const createTransaction = async (
                 type: transaction.type,
             },
         });
-
         if (!category) {
             reply.status(400).send({
                 error: 'Category not found',
             });
             return;
         }
+
         const parsedDate = new Date(transaction.date);
 
         const newTransaction = await prisma.transaction.create({
             data: {
                 ...transaction,
-                date: parsedDate,
                 userId,
-                decription: transaction.description,
+                date: parsedDate,
             },
             include: {
                 category: true,
             },
         });
         reply.status(201).send(newTransaction);
-        return;
     }
     catch (err) {
         req.log.error('Error ao criar transaçao', err);
         reply.status(500).send({ error: 'Internal server error' });
         console.log(err)
     }
-};
-export default createTransaction;
+}; export default createTransaction;

@@ -8,10 +8,10 @@ const isValidObjectId = (id: string): boolean => {
 
 export const createTransactionSchema = z.object({
     amount: z.number().positive("valor deve ser positivo"),
+    description: z.string().min(2, "descrição obrigatoria"),
     categoryId: z.string().refine(isValidObjectId, {
         message: "categoria invalida"
     }),
-    description: z.string().min(2, "descrição obrigatoria"),
     date: z.coerce.date({
         errorMap: () => ({ message: "data invalida" }),
     }),
