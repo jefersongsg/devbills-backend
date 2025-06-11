@@ -6,10 +6,7 @@ import prisma from "../../config/prisma";
 import type { GetTransactionsSummaryQuiery } from "../../schemas/transaction.schema";
 import type { CategorySummary } from "../../types/category.types";
 import type { TransactionSummary } from "../../types/transactions.type";
-
-
 dayjs.extend(utc);
-
 
 export const getTransactionsSummary = async (
     req: FastifyRequest<{ Querystring: GetTransactionsSummaryQuiery }>,
